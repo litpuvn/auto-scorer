@@ -18,7 +18,7 @@ jsonOutputFile = 'json_concepts.json'
 for file in sys.argv:
     jsonConcepts = {}
     anwserCount = 0
-    with open(fileName) as f:
+    with open(file) as f:
         for answer in f:
             anwserCount += 1
             jsonConcepts['a_' + str(anwserCount)] = [{}]
@@ -39,7 +39,7 @@ for file in sys.argv:
                             finalSynsets.append(synset)
                     jsonConcepts['a_' + str(anwserCount)][0]['s_' + str(sentenceCount)][0][concept.strip()] = finalSynsets # Adds list of synanonms to concept
 
-    jsonFileName = file.split(".")[0] + "_OUTPUT.json"
+    jsonFileName = "output-files\\" + file.split(".")[0] + "-OUTPUT.json"
 
     jf = open(jsonFileName, "w")
     jf.write(json.dumps(jsonConcepts, sort_keys=True))
