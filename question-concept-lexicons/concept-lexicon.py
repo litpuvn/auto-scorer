@@ -37,7 +37,7 @@ for file in sys.argv:
                         synset = str(synset).split("'")[1].split(".")[0] # Cleans up the synset output: Synset('cold.n.01') -> cold
                         if synset not in finalSynsets:
                             finalSynsets.append(synset)
-                    jsonConcepts['a_' + str(anwserCount)][0]['s_' + str(sentenceCount)][0][concept] = finalSynsets # Adds list of synanonms to concept
+                    jsonConcepts['a_' + str(anwserCount)][0]['s_' + str(sentenceCount)][0][concept.strip()] = finalSynsets # Adds list of synanonms to concept
 
     jsonFileName = file.split(".")[0] + "_OUTPUT.json"
 
