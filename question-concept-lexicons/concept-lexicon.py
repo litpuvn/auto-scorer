@@ -3,26 +3,44 @@
 '''
 Simple concept lexicon program for short answer questions
 '''
-from textblob import TextBlob
+import json
+import sys
 from textblob import Word
-from textblob.wordnet import Synset
 
-testQuestion_1 = "The best way for a society to prepare its young people for leadership in government, industry, or other fields is by instilling in them a sense of cooperation, not competition."
 
-blob = TextBlob(testQuestion_1)
+print(sys.argv)
 
-for word, pos in blob.tags:
-    #pos is in unicode format
-    if pos.encode('utf-8') == 'NN' or pos.encode('utf-8') == 'VP' or pos.encode('utf-8') == 'NP':
-        synsetList = Word(word)
-        print("Original Word: \t" + word)
-        print(synsetList.synsets)
-        print("\n")
 
-        # Check for similarity value, range [0,1]
+fileName = 'test_concepts.txt'
+jsonOutputFile = 'json_concepts.json'
 
-        # for synset in synsetList.synsets:
-        #     print(Synset(word).path_similarity(synset))
+jsonConcepts = {}
+
+anwserCount = 0
+with open(fileName) as f:
+    for answer in f:
+        anwserCount += 1
+        jsonConcepts['a_' + str(anwserCount)] = [{}]
+        sentences = answer.split("|")
+        sentenceCount = 0
+        for sentence in sentences:
+            sentenceCount += 1
+            jsonConcepts['a_' + str(anwserCount)][0]['s_' + str(sentenceCount)] = [{}]
+            concepts = sentence.split(",")
+            conceptCount = 0
+            for concept in concepts:
+                conceptCount += 1
+                synsetList = Word(concept.strip()).synsets # .strip removes the first and last whitespaces and get the synset list
+                finalSynsets = []
+                for synset in synsetList:
+                    synset = str(synset).split("'")[1].split(".")[0] # Cleans up the synset output: Synset('cold.n.01') -> cold
+                    if synset not in finalSynsets:
+                        finalSynsets.append(synset)
+                jsonConcepts['a_' + str(anwserCount)][0]['s_' + str(sentenceCount)][0][concept] = finalSynsets # Adds list of synanonms to concept
+
+with open(jsonOutputFile, 'w') as jf:
+    jf.write(json.dumps(jsonConcepts, sort_keys=True))
+
 
 
 

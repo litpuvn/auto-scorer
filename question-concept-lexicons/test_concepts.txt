@@ -1,0 +1,3 @@
+rain, snow, wet | cold, dangerous | inside
+cold, raining| sad, dangerous, ice
+cold, snow
