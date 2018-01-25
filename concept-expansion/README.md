@@ -22,23 +22,25 @@ in compiling this program:
 ##Input File Format
 
 1. File Extension, .txt
-2. Rows represent different answers from the same question
+2. Rows represent unique anwsers from a short anwser question
 3. Each row may contain multiple sentences, with each sentences seperated by a 
 vertical bar, "|", character
 4. Inbetween the vertical bar are comma seperated concepts. English words or word phrases
+5. Grades are given at the beggining of each row, seperated by a double verticle line, "||".
+If the **answer has not been graded**, denote that as **-1**
 
 **Psuedo Example:**
 ```
-concept 1, concept 2 | concept 3, concept 4, concept 5 | concept 6
-concept 9
-concept 2 | concept 5, concept 6
+grade || concept 1, concept 2 | concept 3, concept 4, concept 5 | concept 6
+ungraded || concept 9
+grade || concept 2 | concept 5, concept 6
 ```
 
 **Genuine Example:**
 ```
-rain, snow, wet | cold, dangerous | freezing cold, icey
-cold, raining | sad, dangerous, ice
-snowy, ice cold
+5 || rain, snow, wet | cold, dangerous | freezing cold, icey
+-1 || cold, raining | sad, dangerous, ice
+3 || snowy, ice cold
 ```
 
 ##Out File Format
@@ -47,7 +49,7 @@ This program will output a json file that is easily parseable. Using the input
 format, *Genuine Example*, below here is a shortened JSON Pretty output file sample of the first
 two rows:
 
-* **a_1:** Answer, row 1
+* **a_1:** Arbitrary name convention to seperate each answer
 * **s_1:** Sentence one
 * **rain:** Concept one in sentence one 
 * **snow:** Concept two in sentence one 
@@ -57,6 +59,7 @@ two rows:
 {
 "a_1":[
     {
+        "grade": 5,
         "s_1":[
             {
                 "rain":[
