@@ -1,6 +1,6 @@
-rain, snow, wet | cold, dangerous | inside
-cold, raining| sad, dangerous, ice
-cold, snow
-rain, snow, wet | cold, dangerous | inside
-cold, raining| sad, dangerous, ice
-cold, snow
+6 || rain, snow, wet | cold, dangerous | inside
+3 || cold, raining| sad, dangerous, ice
+5 || cold, snow
+6 || rain, snow, wet | cold, dangerous | inside
+4 || cold, raining| sad, dangerous, ice
+-1 || cold, snow

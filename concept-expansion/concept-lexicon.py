@@ -22,11 +22,13 @@ for file in sys.argv:
         for answer in f:
             anwserCount += 1
             jsonConcepts['a_' + str(anwserCount)] = [{}]
-            sentences = answer.split("|")
+            sentences = answer.split("||")[1].split("|")
+            grade = answer.split("||")[0]
             sentenceCount = 0
             for sentence in sentences:
                 sentenceCount += 1
                 jsonConcepts['a_' + str(anwserCount)][0]['s_' + str(sentenceCount)] = [{}]
+                jsonConcepts['a_' + str(anwserCount)][0]['grade'] = grade.strip()
                 concepts = sentence.split(",")
                 conceptCount = 0
                 for concept in concepts:
