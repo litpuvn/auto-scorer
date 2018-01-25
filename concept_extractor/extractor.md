@@ -24,7 +24,7 @@ In a seperate command prompt,
 `$ python extractor.py answer_set0.txt answer_set1.txt`
 
 
-##Input File Format
+## Input File Format
 
 1. File Extension, .txt
 2. Rows represent different answers from the same question
@@ -42,7 +42,7 @@ The water will slowly evaporate over time. This water eventually condensates int
 Water can escape the ground via wells, which humans have been digging for a long time.
 ```
 
-##Out File Format
+## Out File Format
 
 This program will output a .txt file for each inputted file, with the name of the file corresponding to the order in which the files are written. For example, the command:
 `$ python extractor.py answer_set0.txt answer_set1.txt`
