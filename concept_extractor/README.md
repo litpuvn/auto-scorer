@@ -24,7 +24,7 @@ In a seperate command prompt,
 `$ python extractor.py answer_set0.txt answer_set1.txt`
 
 
-##Input File Format
+## Input File Format
 
 1. File Extension, .txt
 2. Rows represent different answers from the same question
