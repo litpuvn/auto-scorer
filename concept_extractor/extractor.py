@@ -10,10 +10,12 @@ nlp = StanfordCoreNLP('http://localhost:9000')
 
 sys.argv.pop(0)
 
-with open('editstopwords.txt') as e:
+with open('custom_stopwords.txt') as e:
     stopwordList=e.read()+','.join(set(stopwords.words('english')))
 
-filenum=0
+#stopwordList=list(set(stopwordList)).lower()
+#word.lower() for word in stopwordList
+
 for file in sys.argv:
     clname = file[:-4] + "_concepts.txt"
     with open(file,'r') as f: #Reads in sentences from answer_set.txt. Removes punctuation, and annotates
@@ -27,32 +29,30 @@ for file in sys.argv:
                     grade=str(grades[i])
                     input = ''.join(input.rstrip()+'\n')
                     input = input.lower() #Makes all uppercase letters lowercase.
-                    for c in input:
-                        input = input.replace(".", " Qjq ")
-                        input = input.replace("?", " Qjq")
-                        input = input.replace("!", " Qjq")
-                        input = input.replace("Qjq Qjq", " Qjq")
-                        input = input.replace("Qjq\n", " qJq ")
-                        input = input.replace("\n", " qJq ")
+                    input = input.replace(".", "_")
+                    input = input.replace("?", "_")
+                    input = input.replace("!", "_")
+                    while "_\n" in input:
+                        input = input.replace("_\n", "\n")
+                    input = input.replace("\n", "+")
+
                     for z in grade:
                         grade = grade.rstrip()
-                    output = nlp.annotate(input.translate(None, string.punctuation), properties={'annotators': 'tokenize,pos,parse', 'outputFormat': 'json'})
-                    filenum = filenum+1
-                    full=False
-                    gIndex=0
+                    punctuationString = "!#$%&'()*,-./:;<=>?@[]^`{|}~"
+                    output = nlp.annotate(input.translate(None, punctuationString), properties={'annotators': 'tokenize,pos,parse,lemma', 'outputFormat': 'json'})
+                    notEmpty=False
                     for s in output['sentences']:
                         if grade == '':
                             grade='0'
-                        gOutput=str(grade)+" || "
+                        gOutput=str(grade).zfill(3)+" || "
                         t.write(gOutput)
-                        gIndex=gIndex+1
-                        full=True
+                        notEmpty=True
                         cs = False
                         for w in s["tokens"]:
-                            if w["word"]=='Qjq':
+                            if w["word"]=='_':
                                 t.write(" | ")
                                 cs=False
-                            elif w["word"]=='qJq':
+                            elif w["word"]=='+':
                                 t.write("\n")
                                 cs=False
                             elif w["word"] in stopwordList: #removes stopwords from the input
@@ -61,12 +61,9 @@ for file in sys.argv:
                                 if cs==False:
                                     cs=True
                                     #t.write("'%s': %s" % (w["word"], w['pos']))
-                                    t.write("%s" % (w["word"]))
+                                    t.write("%s" % (w["lemma"]))
                                 else:
                                     #t.write(", '%s': %s" % (w["word"], w['pos']))
-                                    t.write(", %s" % (w["word"]))
-                    if full==False:
+                                    t.write(", %s" % (w["lemma"]))
+                    if notEmpty==False:
                         t.write('\n')
-    #with open(clname, 'rb+') as filehandle:
-    #    filehandle.seek(-2, os.SEEK_END)
-    #    filehandle.truncate()
