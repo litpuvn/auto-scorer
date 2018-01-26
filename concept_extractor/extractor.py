@@ -31,7 +31,6 @@ for file in sys.argv:
                     input = input.replace("Qjq\n", " qJq ")
                     input = input.replace("\n", " qJq ")
                 output = nlp.annotate(input.translate(None, string.punctuation), properties={'annotators': 'tokenize,pos,parse', 'outputFormat': 'json'})
-                filenum = filenum+1
                 full=False
                 for s in output['sentences']:
                     full=True
