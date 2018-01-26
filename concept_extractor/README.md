@@ -57,7 +57,7 @@ Water can escape the ground via wells, which humans have been digging for a long
 70
 ```
 
-##Out File Format
+## Output File Format
 
 This program will output a .txt file for each inputted file, with the name of the file corresponding to the order in which the files are written. For example, the command:
 `$ python extractor.py answer_set0.txt answer_set1.txt`
