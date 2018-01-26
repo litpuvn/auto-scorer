@@ -13,7 +13,7 @@ Once the .zip file has been downloaded and unpacked, navigate to the folder in a
 `$ java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port 9000 -timeout 15000`
 
 In a seperate command prompt,
-**extractor.py** requires command line arguements in order to compile the program, as well as two input files: <filename>.txt and <filename>_grades.txt.
+**extractor.py** requires command line arguements in order to compile the program, as well as two input files: "filename".txt and "filename"_grades.txt.
 
 **One Input File:**
 
@@ -29,7 +29,7 @@ In a seperate command prompt,
 1. File Extension, .txt
 2. Rows represent different answers from the same question
 3. No empty rows
-4. There must be a grade in the <filename>_grade.txt file for every answer in the <filename>.txt file
+4. There must be a grade in the "filename"_grade.txt file for every answer in the "filename".txt file
 
 **Psuedo Example (Answer File):**
 ```
