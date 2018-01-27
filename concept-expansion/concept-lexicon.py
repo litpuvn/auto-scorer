@@ -7,6 +7,7 @@ import json
 import sys
 import csv
 import Levenshtein
+import difflib
 import os
 from datetime import datetime
 from textblob import Word
@@ -55,7 +56,8 @@ for file in sys.argv:
                 highestGrade = 0.0
                 for line in lines:
                     gradeList = line['Correct concepts (reasoning on the given grade)'].split(" ") # List of high scoring answers
-                    calcGrade = Levenshtein.ratio("".join(gradeList), "".join(anwserConceptList))
+                    # calcGrade = Levenshtein.ratio("".join(gradeList), "".join(anwserConceptList)) # Levenshtein comparison
+                    calcGrade = difflib.SequenceMatcher(None, "".join(gradeList), "".join(anwserConceptList)).ratio()
                     if calcGrade > highestGrade:
                         highestGrade = calcGrade
 
