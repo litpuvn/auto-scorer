@@ -22,11 +22,12 @@ in compiling this program:
 ##Input File Format
 
 1. File Extension, .txt
-2. Rows represent unique anwsers from a short anwser question
-3. Each row may contain multiple sentences, with each sentences seperated by a 
+2. Place file in **../concept-expansion/..** directory
+3. Rows represent unique anwsers from a short anwser question
+4. Each row may contain multiple sentences, with each sentences seperated by a 
 vertical bar, "|", character
-4. Inbetween the vertical bar are comma seperated concepts. English words or word phrases
-5. Grades are given at the beggining of each row, seperated by a double verticle line, "||".
+5. Inbetween the vertical bar are comma seperated concepts. English words or word phrases
+6. Grades are given at the beggining of each row, seperated by a double verticle line, "||".
 If the **answer has not been graded**, denote that as **-1**
 
 **Psuedo Example:**
@@ -49,6 +50,11 @@ This program will output a json file that is easily parseable. Using the input
 format, *Genuine Example*, below here is a shortened JSON Pretty output file sample of the first
 two rows:
 
+* **0_grading_accuracy:** Overall accuracy of our grading program.
+    Mean of when "Actual Grade" is equal "Calculated Grade"
+* **Actual Grade:** Grade that was recieved by human grader
+* **Calculated Grade:** Grade that was recieved by program grader
+* **s_1:** Sentence one
 * **a_1:** Arbitrary name convention to seperate each answer
 * **s_1:** Sentence one
 * **rain:** Concept one in sentence one 
@@ -57,9 +63,11 @@ two rows:
 
 ```
 {
+"0_grading_accuracy": 34.1747572815534,
 "a_1":[
     {
-        "grade": 5,
+        "Actual Grade": 5,
+        "Calculated Grade": 2,
         "s_1":[
             {
                 "rain":[
