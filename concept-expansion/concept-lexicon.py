@@ -20,7 +20,8 @@ manualGradesFile = 'manual-grades.csv'
 maxGrade = 6
 
 # Create concept expansion json file
-for file in sys.argv:
+def createJsonFile(file):
+
     jsonConcepts = {}
     anwserCount = 0
     accuracyCount = 0
@@ -35,7 +36,7 @@ for file in sys.argv:
             for sentence in sentences:
                 sentenceCount += 1
                 jsonConcepts['a_' + str(anwserCount)][0]['s_' + str(sentenceCount)] = [{}]
-                jsonConcepts['a_' + str(anwserCount)][0]['Actual Grade'] = int(grade.strip())
+                jsonConcepts['a_' + str(anwserCount)][0]['0_Actual Grade'] = int(grade.strip())
                 concepts = sentence.split(",")
                 conceptCount = 0
                 for concept in concepts:
@@ -50,44 +51,49 @@ for file in sys.argv:
                         if syn not in anwserConceptList:
                             anwserConceptList.append(syn)  # Entire list of concpets and common words
                     jsonConcepts['a_' + str(anwserCount)][0]['s_' + str(sentenceCount)][0][concept.strip()] = finalSynsets # Adds list of synanonms to concept
+                    anwserConceptList = [x.strip(' ') for x in anwserConceptList]
 
-            # Iterate through manual graded data
-            # Check if term in anwserConceptList is gradeList
-            # Get percentage of terms found
-            with open(manualGradesFile, "rb") as f:
+                    actGrade = jsonConcepts['a_' + str(anwserCount)][0]['0_Actual Grade']
+                    calculatedGrade = calcGrade(anwserConceptList)
 
-                gradedAns = csv.DictReader(f)
-                highestGrade = 0.0
-
-                for gAns in gradedAns:  # Iterate through each graded answers
-                    gCL = gAns['Correct concepts (reasoning on the given grade)'].split(" ")  # Graded Concept List
-                    concMatch = 0
-                    for gC in gCL:  # Iterate through each concept in non-graded answer
-                        for ngC in anwserConceptList:  # Iterate through each concept in graded answer
-                            wordMatch = Levenshtein.ratio(gC, ngC)
-                            if wordMatch > .80:
-                                if(concMatch < len(gCL)):
-                                    concMatch += 1
-                    currentGrade = concMatch / float(len(gCL)) #  Calculated how many nongraded Concepts were found in graded concepts list
-                    if currentGrade > highestGrade:
-                        highestGrade = currentGrade
-
-            jsonConcepts['a_' + str(anwserCount)][0]['Calculated Grade'] = int(highestGrade * maxGrade)
-
-            # Calculate the accuracy of the auto grader
-
-            actualGrade = jsonConcepts['a_' + str(anwserCount)][0]['Actual Grade']
-            calcGrade = jsonConcepts['a_' + str(anwserCount)][0]['Calculated Grade']
-
-            if(calcGrade == actualGrade):
+                    jsonConcepts['a_' + str(anwserCount)][0]['3_Final Concept List'] = anwserConceptList
+                    jsonConcepts['a_' + str(anwserCount)][0]['1_Calculated Grade'] = calculatedGrade
+            if (calculatedGrade == actGrade):
                 accuracyCount += 1
 
-        overallAccuracy = (accuracyCount / float(anwserCount)) * 100
-        jsonConcepts["0_grading_accuracy"] = overallAccuracy
-        print(overallAccuracy)
+    overallAccuracy = (accuracyCount / float(anwserCount)) * 100
 
+    jsonConcepts["Grading Accuracy"] = overallAccuracy
 
-    jsonFileName = "output-files\\" + file.split(".")[0] + "-OUTPUT.json"
-
+    jsonFileName = "output-files/" + file.split(".")[0] + "-OUTPUT.json"
     jf = open(jsonFileName, "w")
     jf.write(json.dumps(jsonConcepts, sort_keys=True))
+
+    print("Json file created: {}".format(jsonFileName))
+
+# Iterate through manual graded data
+# Check if term in anwserConceptList is gradeList
+# Get percentage of terms found
+def calcGrade(ngCL):
+    with open(manualGradesFile, "rb") as f:
+        gradedAns = csv.DictReader(f)
+        highestGrade = 0.0
+        for gAns in gradedAns:  # Iterate through each graded answers
+            gCL = gAns['Correct concepts (reasoning on the given grade)'].split(" ")  # Graded Concept List
+            concMatch = 0
+            for gC in gCL:  # Iterate through each concept in non-graded answer
+                for ngC in ngCL:  # Iterate through each concept in graded answer
+                    wordMatch = Levenshtein.ratio(gC, ngC)
+                    if wordMatch > .80:
+                        if (concMatch < len(gCL)):
+                            concMatch += 1
+            currentGrade = concMatch / float(len(gCL))  # Calculated how many nongraded Concepts were found in graded concepts list
+            if currentGrade > highestGrade:
+                highestGrade = currentGrade
+    return int(highestGrade * maxGrade + .5) # Rounded Up
+
+# Main
+if __name__ == "__main__":
+
+    for file in sys.argv:
+        createJsonFile(file)
