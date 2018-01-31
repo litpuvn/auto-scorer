@@ -1,0 +1,6 @@
+006 || water, enters, ground, untrapped, turn, air, evaporated, stay, underground
+006 || water, continually, gather, until, reaches, ground, level, easily, collected, humans, created, wells, retrieve, underground
+006 || Water, goes, soil, absorbs, flowing, shown, graph, supports, evidence, claim, layers, sediments, all, solid, water, penetrate, until, solid, layer, changes, path, stops
+006 || sun, evaporated, clouds, filled, rain, ground, falls, reabsorbs, sediments, pool, water, under, rocks
+006 || water, trapped, flow, below, black, layer, land, beneath, earth, surface, soil, pore, spaces, formation, onconsolidated, deposit, aquifer, depth, saturated, groundwater, springs, seeps, oases, wetlands, hydrogeology, hydrology
+006 || water, staying, gaps, rocks, flow, through

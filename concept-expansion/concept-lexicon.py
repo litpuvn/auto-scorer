@@ -16,7 +16,11 @@ from fuzzywuzzy import fuzz
 
 sys.argv.pop(0)
 
-manualGradesFile = 'manual-grades.csv'
+largeTrainFile = 'large-train-data.csv'
+smallTrainFile = 'small-train-data.csv'
+masterTrainFile = 'master-train-data.csv'
+
+manualGradesFile = masterTrainFile
 maxGrade = 6
 
 # Create concept expansion json file
@@ -55,7 +59,7 @@ def createJsonFile(file):
                     anwserConceptList = [x.strip(' ') for x in anwserConceptList]
 
                     actGrade = jsonConcepts['a_' + str(anwserCount)][0]['0_Actual Grade']
-                    calculatedGrade = calcGrade(anwserConceptList)
+                    calculatedGrade = calcGradeM2(anwserConceptList)
 
                     jsonConcepts['a_' + str(anwserCount)][0]['3_Final Concept List'] = anwserConceptList
                     jsonConcepts['a_' + str(anwserCount)][0]['1_Calculated Grade'] = calculatedGrade
@@ -71,7 +75,7 @@ def createJsonFile(file):
     print("One to One: {}".format(oneToOneAccuracy(accuracyList)))
     print("Percentage Agree: {}".format(percentageAgreement(accuracyList)))
 
-    jsonConcepts["Grading Accuracy"] = "TESTING"
+    jsonConcepts["Grading Accuracy"] = percentageAgreement(accuracyList)
 
     jsonFileName = "output-files/" + file.split(".")[0] + "-OUTPUT.json"
     jf = open(jsonFileName, "w")
@@ -82,7 +86,7 @@ def createJsonFile(file):
 # Method 1
 # Highest % number of concepts in ungraded answer found in
 # the graded answer key
-def calcGrade(ngCL):
+def calcGradeM1(ngCL):
     with open(manualGradesFile, "rb") as f:
         gradedAns = csv.DictReader(f)
         highestGrade = 0.0
@@ -100,6 +104,48 @@ def calcGrade(ngCL):
                 highestGrade = currentGrade
     return int(highestGrade * maxGrade + .5) # Rounded Up
 
+# Method 2
+# Use all of manual data scores
+# Find the scores using Method 1 for all possible scores
+# Take the high score found out of all
+
+def calcGradeM2(ngCL):
+    with open(manualGradesFile, "rb") as f:
+        gradedAns = csv.DictReader(f)
+        gradeObj = {}   #Creates an object to contain all high scores for 0-1
+        currentScore = 0 # Lets the functions know when a new score is being compared
+        finalScore = 0  # Keeps track of the highest score in the comparison
+        officalGrade = 0 # When new finalScores are found, the offical grade will be set
+        for gAns in gradedAns:  # Iterate through each graded answers
+            if(currentScore != gAns['Grade']):
+                highestGrade = 0
+                currentScore = gAns['Grade']
+            gradeObj[str(gAns['Grade'])] = [{}]
+            gradeObj[str(gAns['Grade'])][0]['Act_Grade'] = gAns['Grade']
+            gCL = gAns['Correct concepts (reasoning on the given grade)'].split(" ")  # Graded Concept List
+            concMatch = 0
+            for gC in gCL:  # Iterate through each concept in non-graded answer
+                for ngC in ngCL:  # Iterate through each concept in graded answer
+                    wordMatch = Levenshtein.ratio(gC, ngC)
+                    if wordMatch > .80:
+                        if (concMatch < len(gCL)):
+                            concMatch += 1
+            currentGrade = concMatch / float(
+                len(gCL))  # Calculated how many nongraded Concepts were found in graded concepts list
+            if currentGrade > highestGrade:
+                highestGrade = currentGrade
+
+            cG = int(highestGrade * maxGrade + .5)  # Calculated Grade
+            aG = int(gAns['Grade'])  # Actual Grade
+            gradeObj[str(gAns['Grade'])][0]['Calc_Grade'] = cG
+
+            if cG > finalScore:
+                finalScore = cG
+                officalGrade = aG
+        gradeObj["Final_Grade"] = officalGrade
+
+    return gradeObj['Final_Grade']
+
 def oneToOneAccuracy(accuracyList):
     sum = 0
     for accuracy in accuracyList:
@@ -113,6 +159,7 @@ def percentageAgreement(accuracyList):
 
 # Main
 if __name__ == "__main__":
-
+    print("Auto Grading Started")
+    print("This may take awhile...")
     for file in sys.argv:
         createJsonFile(file)
