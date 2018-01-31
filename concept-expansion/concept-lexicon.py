@@ -25,6 +25,7 @@ def createJsonFile(file):
     jsonConcepts = {}
     anwserCount = 0
     accuracyCount = 0
+    accuracyList = []
     with open(file) as f:
         for answer in f:
             anwserCount += 1
@@ -58,12 +59,19 @@ def createJsonFile(file):
 
                     jsonConcepts['a_' + str(anwserCount)][0]['3_Final Concept List'] = anwserConceptList
                     jsonConcepts['a_' + str(anwserCount)][0]['1_Calculated Grade'] = calculatedGrade
-            if (calculatedGrade == actGrade):
-                accuracyCount += 1
 
-    overallAccuracy = (accuracyCount / float(anwserCount)) * 100
+            # This next two lines are need since divison by 0 is undifined
+            calculatedGrade += 1
+            actGrade +=1
+            if (calculatedGrade >= actGrade):
+                accuracyList.append(actGrade / float(calculatedGrade))
+            else:
+                accuracyList.append(calculatedGrade / float(actGrade))
 
-    jsonConcepts["Grading Accuracy"] = overallAccuracy
+    print("One to One: {}".format(oneToOneAccuracy(accuracyList)))
+    print("Percentage Agree: {}".format(percentageAgreement(accuracyList)))
+
+    jsonConcepts["Grading Accuracy"] = "TESTING"
 
     jsonFileName = "output-files/" + file.split(".")[0] + "-OUTPUT.json"
     jf = open(jsonFileName, "w")
@@ -71,9 +79,9 @@ def createJsonFile(file):
 
     print("Json file created: {}".format(jsonFileName))
 
-# Iterate through manual graded data
-# Check if term in anwserConceptList is gradeList
-# Get percentage of terms found
+# Method 1
+# Highest % number of concepts in ungraded answer found in
+# the graded answer key
 def calcGrade(ngCL):
     with open(manualGradesFile, "rb") as f:
         gradedAns = csv.DictReader(f)
@@ -91,6 +99,17 @@ def calcGrade(ngCL):
             if currentGrade > highestGrade:
                 highestGrade = currentGrade
     return int(highestGrade * maxGrade + .5) # Rounded Up
+
+def oneToOneAccuracy(accuracyList):
+    sum = 0
+    for accuracy in accuracyList:
+        if (accuracy == 1.0):
+            sum += 1
+    return (sum / float(len(accuracyList)))
+
+def percentageAgreement(accuracyList):
+    return (sum(accuracyList) / float(len(accuracyList)))
+
 
 # Main
 if __name__ == "__main__":
