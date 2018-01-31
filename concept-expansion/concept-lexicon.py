@@ -20,7 +20,7 @@ largeTrainFile = 'large-train-data.csv'
 smallTrainFile = 'small-train-data.csv'
 masterTrainFile = 'master-train-data.csv'
 
-manualGradesFile = masterTrainFile
+manualGradesFile = smallTrainFile
 maxGrade = 6
 
 # Create concept expansion json file
