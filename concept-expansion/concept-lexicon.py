@@ -20,7 +20,7 @@ largeTrainFile = 'large-train-data.csv'
 smallTrainFile = 'small-train-data.csv'
 masterTrainFile = 'master-train-data.csv'
 
-manualGradesFile = smallTrainFile
+manualGradesFile = smallTrainFile # Change this file name to test various training size files
 maxGrade = 6
 
 # Create concept expansion json file
@@ -130,8 +130,7 @@ def calcGradeM2(ngCL):
                     if wordMatch > .80:
                         if (concMatch < len(gCL)):
                             concMatch += 1
-            currentGrade = concMatch / float(
-                len(gCL))  # Calculated how many nongraded Concepts were found in graded concepts list
+            currentGrade = concMatch / float(len(gCL))  # Calculated how many nongraded Concepts were found in graded concepts list
             if currentGrade > highestGrade:
                 highestGrade = currentGrade
 
