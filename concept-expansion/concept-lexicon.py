@@ -20,7 +20,7 @@ largeTrainFile = 'large-train-data.csv'
 smallTrainFile = 'small-train-data.csv'
 masterTrainFile = 'master-train-data.csv'
 
-manualGradesFile = smallTrainFile # Change this file name to test various training size files
+manualGradesFile = masterTrainFile # Change this file name to test various training size files
 maxGrade = 6
 
 # Create concept expansion json file
@@ -60,17 +60,16 @@ def createJsonFile(file):
 
                     actGrade = jsonConcepts['a_' + str(anwserCount)][0]['0_Actual Grade']
                     calculatedGrade = calcGradeM2(anwserConceptList)
-
                     jsonConcepts['a_' + str(anwserCount)][0]['3_Final Concept List'] = anwserConceptList
-                    jsonConcepts['a_' + str(anwserCount)][0]['1_Calculated Grade'] = calculatedGrade
+                    jsonConcepts['a_' + str(anwserCount)][0]['1_Grades'] = calculatedGrade
 
             # This next two lines are need since divison by 0 is undifined
-            calculatedGrade += 1
+            calculatedGrade['00_Final_Grade'] += 1
             actGrade +=1
-            if (calculatedGrade >= actGrade):
-                accuracyList.append(actGrade / float(calculatedGrade))
+            if (calculatedGrade['00_Final_Grade'] >= actGrade):
+                accuracyList.append(actGrade / float(calculatedGrade['00_Final_Grade']))
             else:
-                accuracyList.append(calculatedGrade / float(actGrade))
+                accuracyList.append(calculatedGrade['00_Final_Grade'] / float(actGrade))
 
     print("One to One: {}".format(oneToOneAccuracy(accuracyList)))
     print("Percentage Agree: {}".format(percentageAgreement(accuracyList)))
@@ -134,16 +133,16 @@ def calcGradeM2(ngCL):
             if currentGrade > highestGrade:
                 highestGrade = currentGrade
 
-            cG = int(highestGrade * maxGrade + .5)  # Calculated Grade
+            cG = int(highestGrade * maxGrade)  # Calculated Grade
             aG = int(gAns['Grade'])  # Actual Grade
             gradeObj[str(gAns['Grade'])][0]['Calc_Grade'] = cG
 
             if cG > finalScore:
                 finalScore = cG
                 officalGrade = aG
-        gradeObj["Final_Grade"] = officalGrade
+        gradeObj["00_Final_Grade"] = officalGrade
 
-    return gradeObj['Final_Grade']
+    return gradeObj
 
 def oneToOneAccuracy(accuracyList):
     sum = 0
