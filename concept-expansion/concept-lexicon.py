@@ -41,7 +41,7 @@ def createJsonFile(file):
             for sentence in sentences:
                 sentenceCount += 1
                 jsonConcepts['a_' + str(anwserCount)][0]['s_' + str(sentenceCount)] = [{}]
-                jsonConcepts['a_' + str(anwserCount)][0]['0_Actual Grade'] = int(grade.strip())
+                jsonConcepts['a_' + str(anwserCount)][0]['0_Actual_Grade'] = int(grade.strip())
                 concepts = sentence.split(",")
                 conceptCount = 0
                 for concept in concepts:
@@ -58,21 +58,31 @@ def createJsonFile(file):
                     jsonConcepts['a_' + str(anwserCount)][0]['s_' + str(sentenceCount)][0][concept.strip()] = finalSynsets # Adds list of synanonms to concept
                     anwserConceptList = [x.strip(' ') for x in anwserConceptList]
 
-                    actGrade = jsonConcepts['a_' + str(anwserCount)][0]['0_Actual Grade']
+                    actGrade = jsonConcepts['a_' + str(anwserCount)][0]['0_Actual_Grade']
                     calculatedGrade = calcGradeM2(anwserConceptList)
-                    jsonConcepts['a_' + str(anwserCount)][0]['3_Final Concept List'] = anwserConceptList
-                    jsonConcepts['a_' + str(anwserCount)][0]['1_Grades'] = calculatedGrade
+                    jsonConcepts['a_' + str(anwserCount)][0]['4_Final_Concept_List'] = anwserConceptList
+                    jsonConcepts['a_' + str(anwserCount)][0]['1_Calculated_Grade'] = calculatedGrade
+
+            actGrade += 1
+            calculatedGrade += 1
+            if (actGrade >= calculatedGrade):
+                precAgree = (calculatedGrade) / float(actGrade)
+            else:
+                precAgree = (actGrade) / float(calculatedGrade)
+            accuracyList.append(precAgree)
+            jsonConcepts['a_' + str(anwserCount)][0]['3_Precentage_Agreement'] = precAgree
 
             # This next two lines are need since divison by 0 is undifined
-            calculatedGrade['00_Final_Grade'] += 1
-            actGrade +=1
-            if (calculatedGrade['00_Final_Grade'] >= actGrade):
-                accuracyList.append(actGrade / float(calculatedGrade['00_Final_Grade']))
-            else:
-                accuracyList.append(calculatedGrade['00_Final_Grade'] / float(actGrade))
+            # calculatedGrade['00_Final_Grade'] += 1
+            # actGrade +=1
+            # if (calculatedGrade['00_Final_Grade'] >= actGrade):
+            #     accuracyList.append(actGrade / float(calculatedGrade['00_Final_Grade']))
+            # else:
+            #     accuracyList.append(calculatedGrade['00_Final_Grade'] / float(actGrade))
 
     print("One to One: {}".format(oneToOneAccuracy(accuracyList)))
     print("Percentage Agree: {}".format(percentageAgreement(accuracyList)))
+    print(accuracyList)
 
     jsonConcepts["Grading Accuracy"] = percentageAgreement(accuracyList)
 
@@ -142,7 +152,7 @@ def calcGradeM2(ngCL):
                 officalGrade = aG
         gradeObj["00_Final_Grade"] = officalGrade
 
-    return gradeObj
+    return officalGrade
 
 def oneToOneAccuracy(accuracyList):
     sum = 0
